@@ -1,0 +1,31 @@
+case os:getenv("BUNDLER_CONFIG") of
+    false -> CONFIG;
+    [] -> CONFIG;
+    BundlerConfig ->
+        ConsultRet =
+        case filelib:is_file(BundlerConfig) of
+            true ->
+                file:consult(BundlerConfig);
+            false ->
+                file:write_file("/tmp/mydeps", BundlerConfig),
+                file:consult("/tmp/mydeps")
+        end,
+        case ConsultRet of
+            {ok, Terms} ->
+                io:format(user, "TERMS ~p~n", [Terms]),
+                lists:foldl(
+                    fun({K, V}, AccCONFIG) ->
+                        case lists:keyfind(K, 1, AccCONFIG) of
+                            false ->
+                                [{K, V} | AccCONFIG];
+                            {K, Existing} when is_list(Existing) ->
+                                lists:keyreplace(K, 1, AccCONFIG, {K, lists:usort(V ++ Existing)});
+                            {K, _} ->
+                                lists:keyreplace(K, 1, AccCONFIG, {K, V})
+                        end
+                    end, CONFIG, Terms);
+            {error, Reason} ->
+                io:format(user, "can't template Rebar3 config ~p~n", [Reason]),
+                exit(1)
+        end
+end.
