@@ -1,0 +1,22 @@
+case filelib:is_file("rebar.lock") of
+    false ->
+        CONFIG;
+    true ->
+        [{"1.1.0", Deps},[{pkg_hash, Hashes}]] = CONFIG,
+        {_, Deps} = lists:keyfind("1.1.0", 1, CONFIG),
+        {ok, VerneMQRebarLockTerms} = file:consult("vernemq.rebar.lock"),
+        [{"1.1.0", VerneMQDeps}, [{pkg_hash, VerneMQHashes}]] = VerneMQRebarLockTerms,
+        {UpdatedDeps, UpdatedHashes} =
+        lists:foldl(
+            fun({DepKey, _Source, _N} = Dep, {AccDeps, AccHashes}) ->
+                case lists:keyfind(DepKey, 1, VerneMQDeps) of
+                    false ->
+                        {[Dep|AccDeps], [lists:keyfind(DepKey, 1, Hashes)|AccHashes]};
+                    ODep ->
+                        {[ODep|AccDeps], [lists:keyfind(DepKey, 1, VerneMQHashes)|AccHashes]}
+                end
+            end, {[],[]}, Deps),
+        UpdatedConfig = [{"1.1.0", UpdatedDeps}, [{pkg_hash, UpdatedHashes}]],
+        io:format(user, "updated rebar.lock ~p~n", [UpdatedConfig]),
+        UpdatedConfig
+end.

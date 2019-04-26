@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+curl https://raw.githubusercontent.com/vernemq/vernemq/${VERNEMQ_VERSION:-master}/rebar.lock --output vernemq.rebar.lock
+rebar3 get-deps
+rm -Rf _build
 rebar3 compile
 find -L _build/default -regex ".*\/\(ebin\|priv\)\/.*" -print0 | tar -czvf bundle.tar.gz --null -T -
 mkdir -p bundler
