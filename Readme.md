@@ -25,7 +25,7 @@ Multiple Environment variable can be set:
 
 ## Example
 
-    docker run -p 8080:8080 -e BUNDLER_CONFIG="{deps, [{myplugin, {git, "git://github.com/mycompany/myplugin.git, {tag, "1.0.0"}}}]}." vernemq/vmq-plugin-bundler
+    docker run -p 8080:8080 -e BUNDLER_CONFIG="{deps, [{myplugin, {git, \"git://github.com/mycompany/myplugin.git\", {tag, \"1.0.0\"}}}]}." vernemq/vmq-plugin-bundler
 
 
 The resulting `bundler.tar.gz` can be downloaded via `wget http://localhost:8080/bundle.tar.gz` 
