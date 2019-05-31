@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 curl https://raw.githubusercontent.com/vernemq/vernemq/${VERNEMQ_VERSION:-master}/rebar.lock --output vernemq.rebar.lock
 rebar3 get-deps
