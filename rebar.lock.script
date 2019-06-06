@@ -2,8 +2,14 @@ case filelib:is_file("rebar.lock") of
     false ->
         CONFIG;
     true ->
-        [{"1.1.0", Deps},[{pkg_hash, Hashes}]] = CONFIG,
-        {_, Deps} = lists:keyfind("1.1.0", 1, CONFIG),
+        {Deps, Hashes} =
+            case CONFIG of
+                [{"1.1.0", CDeps},[{pkg_hash, CHashes}]] ->
+                    {CDeps, CHashes};
+                [CDeps] ->
+                    %% Support old style rebar.lock files
+                    {CDeps, []}
+            end,
         {ok, VerneMQRebarLockTerms} = file:consult("vernemq.rebar.lock"),
         [{"1.1.0", VerneMQDeps}, [{pkg_hash, VerneMQHashes}]] = VerneMQRebarLockTerms,
         {UpdatedDeps, UpdatedHashes} =
