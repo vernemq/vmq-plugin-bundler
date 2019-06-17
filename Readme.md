@@ -14,6 +14,8 @@ an archive named `bundle.tar.gz` and serves this file via HTTP.
 This simplifies the story when one wants to use a custom plugin in
 a dockerized VerneMQ environment.
 
+Note, that currently only plugins using `rebar3` are supported.
+
 ## Configuration
 
 Multiple Environment variable can be set:
