@@ -5,7 +5,8 @@ curl https://raw.githubusercontent.com/vernemq/vernemq/${VERNEMQ_VERSION:-master
 rebar3 get-deps
 rm -Rf _build
 rebar3 compile
-find -L _build/default/lib -regex ".*\/\(plugins\|ebin\|priv\)\/.*" -print0 | tar -czvf bundle.tar.gz --null -T -
+find -L _build/default/lib -regex ".*\/\(plugins\|ebin\|priv\)\/.*" -print0 | tar -cvf bundle.tar -T-
+gzip bundle.tar
 mkdir -p bundler
 mv bundle.tar.gz bundler/.
 echo "Serving bundle on http://${HTTP_ADDRESS:-0.0.0.0}:${HTTP_PORT:-8080}/bundle.tar.gz"
